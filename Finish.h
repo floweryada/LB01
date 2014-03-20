@@ -11,16 +11,16 @@ struct CandidatsList
 
 void myMenu(struct CandidatsList *List, int n);
 
-void newCandidatsList(struct CandidatsList *List, int CandidatsList, const int quanOfCandidats, char wayToFile[]);
-void addCandidat(struct CandidatsList *List, int quanOfAddedCandidats, int quanOfCandidats, int where);
-void showCandidatsList(struct CandidatsList *List, int quanOfConclCandidats);
+void newCandidatsList(struct CandidatsList *List, int Candidats, const int quanOfCandidats);
+void addCandidat(struct CandidatsList *List, int quanOfAddedCandidats, const int quanOfCandidats, int where);
+void showCandidatsList(struct CandidatsList *List, const int quanOfConclCandidats);
 
-void outFront( struct CandidatsList *List, int quanOfCandidats);
-void outBack( struct CandidatsList *List, int quanOfCandidats);
-void Sort(struct CandidatsList *List, int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList));
-void Build (struct CandidatsList *List, int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList));
-void Repair(struct CandidatsList *List, int i, int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList));
-void sortDataBase(struct CandidatsList *List, int quanOfCandidats);
+void outFront( struct CandidatsList *List, const int quanOfCandidats);
+void outBack( struct CandidatsList *List, const int quanOfCandidats);
+void Sort(struct CandidatsList *List, const int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList));
+void Build (struct CandidatsList *List, const int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList));
+void Repair(struct CandidatsList *List, int i, const int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList));
+void sortDataBase(struct CandidatsList *List, const int quanOfCandidats);
 
 int sortBySurnameOfCandidat(struct CandidatsList List1, struct CandidatsList List2);
 int sortByNumberOfElectoralDistrict(struct CandidatsList List1, struct CandidatsList List2);
