@@ -9,10 +9,9 @@ using namespace std;
 
 void myMenu(struct CandidatsList *List, int n)
 {
-    int quanOfCandidats;
+    const int quanOfCandidats = 20;
     int quanOfAddedCandidats;
     int where;
-    char wayToFile[256];
     char enterNumber;
 
     while(true)
@@ -37,7 +36,7 @@ void myMenu(struct CandidatsList *List, int n)
         if( enterNumber == '1')
         {
             system("cls");
-            newCandidatsList( List, 0, quanOfCandidats, wayToFile);
+            newCandidatsList( List, 0, quanOfCandidats);
             system("pause");
         }
         if( enterNumber == '2')
@@ -45,15 +44,10 @@ void myMenu(struct CandidatsList *List, int n)
             system("cls");
             cout << "Enter the quantity of added Candidats: " << endl;
             cin >> quanOfAddedCandidats;
-            cout << "Enter the index, where you want to save your new Candidats: " << endl;
+            cout << "Enter the index where you want to put new Candidats" << endl;
             cin >> where;
             addCandidat( List, quanOfAddedCandidats, quanOfCandidats, where);
             system("pause");
-
-            fstream info;
-            info.open("CandidatsList.txt",ios::out|ios::binary|ios::trunc);
-            info.write((char *)List, quanOfCandidats*sizeof( CandidatsList)) << "\n";
-            info.close();
         }
         if( enterNumber == '3')
         {
@@ -71,7 +65,7 @@ void myMenu(struct CandidatsList *List, int n)
     }
 }
 
-void newCandidatsList(struct CandidatsList *List, int CandidatsList, const int quanOfCandidats, char wayToFile[])
+void newCandidatsList(struct CandidatsList *List, int Candidats, const int quanOfCandidats)
 {
     cin.ignore(1,'\n');
     for(int i = 0; i < quanOfCandidats; ++i)
@@ -89,42 +83,38 @@ void newCandidatsList(struct CandidatsList *List, int CandidatsList, const int q
         cin.getline(List[i].quantityOfSignatures, 10);
         cout << endl;
     }
-
-    cout << "Enter The Way To File Where You Want To Save The Information:\n";
-    cin.getline( wayToFile, 255 ,'\n');
-    fstream info(wayToFile,ios::out|ios::binary|ios::trunc);
+    fstream info;
+    info.open ("CandidatsList.txt", ios::out|ios::binary|ios::trunc);
     info.write((char *)List ,quanOfCandidats*sizeof( CandidatsList)) << "\n";
     info.close();
 
 }
 
-void addCandidat(struct CandidatsList *List, int quanOfAddedCandidats, int quanOfCandidats, int where)
+void addCandidat(struct CandidatsList *List, int quanOfAddedCandidats, const int quanOfCandidats, int where)
 {
     cin.ignore(1,'\n');
-    for( int i = where; i < quanOfCandidats; ++i)
+    for( int i = where; i < where+quanOfAddedCandidats; ++i)
     {
         cout << "Enter Surname Of Candidat: ";
-        cin.getline(List[i].surnameOfCandidat, 20);
-        cout<<endl;
+        cin.getline(List[where].surnameOfCandidat, 20);
 
         cout << "Enter Number Of Electoral District: ";
-        cin.getline(List[i].numberOfElectoralDistrict, 10);
-        cout<<endl;
+        cin.getline(List[where].numberOfElectoralDistrict, 10);
 
         cout << "Enter Name Of Electoral District: ";
-        cin.getline(List[i].nameOfElectoralDistrict, 30);
-        cout<<endl;
+        cin.getline(List[where].nameOfElectoralDistrict, 30);
 
         cout << "Quantity Of Signatures: ";
-        cin.getline(List[i].quantityOfSignatures, 10);
+        cin.getline(List[where].quantityOfSignatures, 10);
         cout<<endl;
     }
-    fstream fout("CandidatsList.txt", ios::out|ios::binary|ios::trunc);
-    fout.write((char *)List, sizeof( CandidatsList)) << "\n";
-    fout.close();
+    fstream info;
+    info.open ("CandidatsList.txt", ios::out|ios::binary|ios::trunc);
+    info.write((char *)List, sizeof( CandidatsList)) << "\n";
+    info.close();
 }
 
-void showCandidatsList(struct CandidatsList *List, int quanOfCandidats)
+void showCandidatsList(struct CandidatsList *List, const int quanOfCandidats)
 {
     cin.ignore(1,'\n');
     for( int i = 0; i < quanOfCandidats; ++i)
@@ -139,7 +129,7 @@ void showCandidatsList(struct CandidatsList *List, int quanOfCandidats)
 
 
 
-void Repair(struct CandidatsList *List, int i, int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList))
+void Repair(struct CandidatsList *List, int i, const int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList))
 {
     int n = quanOfCandidats;
 
@@ -167,7 +157,7 @@ void Repair(struct CandidatsList *List, int i, int quanOfCandidats, int (*fptr)(
     }
 }
 
-void Build (struct CandidatsList *List, int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList))
+void Build (struct CandidatsList *List, const int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList))
 {
     int n = quanOfCandidats;
     for( int i = n/2; i >= 0; --i)
@@ -176,7 +166,7 @@ void Build (struct CandidatsList *List, int quanOfCandidats, int (*fptr)( Candid
     }
 }
 
-void Sort(struct CandidatsList *List, int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList))
+void Sort(struct CandidatsList *List, const int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList))
 {
     CandidatsList *help;
     int n = quanOfCandidats;
@@ -203,7 +193,7 @@ void Sort(struct CandidatsList *List, int quanOfCandidats, int (*fptr)( Candidat
     }
 }
 
-void outFront( struct CandidatsList *List, int quanOfCandidats)
+void outFront( struct CandidatsList *List, const int quanOfCandidats)
 {
     for( int i = 0; i < quanOfCandidats; ++i)
     {
@@ -215,7 +205,7 @@ void outFront( struct CandidatsList *List, int quanOfCandidats)
     }
 }
 
-void outBack( struct CandidatsList *List, int quanOfCandidats)
+void outBack( struct CandidatsList *List, const int quanOfCandidats)
 {
     cin.ignore(1,'\n');
     for( int i = quanOfCandidats-1; i >= 0 ; --i)
@@ -228,7 +218,7 @@ void outBack( struct CandidatsList *List, int quanOfCandidats)
     }
 }
 
-void sortDataBase(struct CandidatsList *List, int quanOfCandidats)
+void sortDataBase(struct CandidatsList *List, const int quanOfCandidats)
 {
     CandidatsList *one = new CandidatsList [22];
     typedef int (*pointer)(CandidatsList, CandidatsList);
