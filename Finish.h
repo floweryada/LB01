@@ -11,20 +11,17 @@ struct CandidatsList
 
 void myMenu(struct CandidatsList *List, int n);
 
-void newCandidatsList(struct CandidatsList *List, int Candidats, const int quanOfCandidats);
-void addCandidat(struct CandidatsList *List, int quanOfAddedCandidats, const int quanOfCandidats, int where);
+void addCandidats(struct CandidatsList *List, int Candidats, const int quanOfCandidats);
 void showCandidatsList(struct CandidatsList *List, const int quanOfConclCandidats);
 
 void outFront( struct CandidatsList *List, const int quanOfCandidats);
 void outBack( struct CandidatsList *List, const int quanOfCandidats);
 void Sort(struct CandidatsList *List, const int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList));
-void Build (struct CandidatsList *List, const int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList));
-void Repair(struct CandidatsList *List, int i, const int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList));
 void sortDataBase(struct CandidatsList *List, const int quanOfCandidats);
 
-int sortBySurnameOfCandidat(struct CandidatsList List1, struct CandidatsList List2);
-int sortByNumberOfElectoralDistrict(struct CandidatsList List1, struct CandidatsList List2);
-int sortByNameOfElectoralDistrict(struct CandidatsList List1, struct CandidatsList List2);
-int sortByQuantityOfSignatures(struct CandidatsList List1, struct CandidatsList List2);
+int compareBySurnameOfCandidat(struct CandidatsList List1, struct CandidatsList List2);
+int compareByNumberOfElectoralDistrict(struct CandidatsList List1, struct CandidatsList List2);
+int compareByNameOfElectoralDistrict(struct CandidatsList List1, struct CandidatsList List2);
+int compareByQuantityOfSignatures(struct CandidatsList List1, struct CandidatsList List2);
 
 #endif
