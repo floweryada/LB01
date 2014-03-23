@@ -158,7 +158,7 @@ void Build (struct CandidatsList *List, const int quanOfCandidats, int (*fptr)( 
 
 void Sort(struct CandidatsList *List, const int quanOfCandidats, int (*fptr)( CandidatsList, CandidatsList))
 {
-    CandidatsList *help;
+    CandidatsList help;
     int n = quanOfCandidats;
     for( int i = n-1; i >= 1; --i)
     {
@@ -175,9 +175,9 @@ void Sort(struct CandidatsList *List, const int quanOfCandidats, int (*fptr)( Ca
             larg = r;
         }
 
-        *help = List[larg];
+        help = List[larg];
         List[larg] = List[i];
-        List[i] = *help;
+        List[i] = help;
         --n;
         Repair( List, larg, quanOfCandidats, (*fptr));
     }
