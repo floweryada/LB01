@@ -9,9 +9,8 @@ using namespace std;
 
 void myMenu(struct CandidatsList *List, int n)
 {
-    const int quanOfCandidats = 20;
+    int quanOfCandidats;
     int quanOfAddedCandidats;
-    int where;
     char enterNumber;
 
     while(true)
@@ -21,8 +20,8 @@ void myMenu(struct CandidatsList *List, int n)
         cout << "Hello!\nIf You want to: "<<endl;
         cout << "   Exit, please, press <0>\n";
         cout << "   Create new CandidatsList, please, press <1>\n";
-        cout << "   Add new Candidat to existing DataBase, please, press <2>\n";
-        cout << "   Open and show the existing DataBase, please, press <3>\n";
+        cout << "   Add new Candidats to existing DataBase, please, press <2>\n";
+        cout << "   Show the existing DataBase, please, press <3>\n";
         cout << "   Sort the existing DataBase, please, press <4>\n";
 
         cin >> enterNumber;
@@ -36,7 +35,17 @@ void myMenu(struct CandidatsList *List, int n)
         if( enterNumber == '1')
         {
             system("cls");
-            newCandidatsList( List, 0, quanOfCandidats);
+            cout << "Enter quantity of Candidats (less than 20):\t";
+            cin >> quanOfCandidats;
+            fstream inf("quanOfCandidats.txt",ios::out|ios::binary|ios::trunc);
+            inf.write((char *)&quanOfCandidats,sizeof(int)) << "\n";
+            inf.close();
+
+            addCandidats( List, 0, quanOfCandidats);
+            fstream info;
+            info.open ("CandidatsList.txt", ios::out|ios::binary|ios::trunc);
+            info.write((char *)List, quanOfCandidats*sizeof( CandidatsList)) << "\n";
+            info.close();
             system("pause");
         }
         if( enterNumber == '2')
@@ -44,15 +53,24 @@ void myMenu(struct CandidatsList *List, int n)
             system("cls");
             cout << "Enter the quantity of added Candidats: " << endl;
             cin >> quanOfAddedCandidats;
-            cout << "Enter the index where you want to put new Candidats" << endl;
-            cin >> where;
-            addCandidat( List, quanOfAddedCandidats, quanOfCandidats, where);
+
+            addCandidats(List,quanOfCandidats,quanOfCandidats+quanOfAddedCandidats);
+            quanOfCandidats+=quanOfAddedCandidats;
+            fstream inf("quanOfCandidats.txt",ios::out|ios::binary|ios::trunc);
+            inf.write((char *)&quanOfCandidats,sizeof(int)) << "\n";
+            inf.close();
             system("pause");
         }
         if( enterNumber == '3')
         {
             system("cls");
-            cout << "This is the existing DataBase:\n";
+
+            fstream fin("quanOfCandidats.txt",ios::in);
+            fin.read((char *)&quanOfCandidats,sizeof(int));
+            fin.close();
+
+            cout << endl;
+            cout << "This is the existing DataBase:\n" << endl;
             showCandidatsList( List, quanOfCandidats);
             system("pause");
         }
@@ -62,13 +80,14 @@ void myMenu(struct CandidatsList *List, int n)
             sortDataBase( List, quanOfCandidats);
             system("pause");
         }
+
     }
 }
 
-void newCandidatsList(struct CandidatsList *List, int Candidats, const int quanOfCandidats)
+void addCandidats(struct CandidatsList *List, int Candidats, const int quanOfCandidats)
 {
     cin.ignore(1,'\n');
-    for(int i = 0; i < quanOfCandidats; ++i)
+    for(int i = Candidats; i < quanOfCandidats; ++i)
     {
         cout << "Enter Surname Of Candidat: ";
         cin.getline(List[i].surnameOfCandidat, 20);
@@ -83,35 +102,6 @@ void newCandidatsList(struct CandidatsList *List, int Candidats, const int quanO
         cin.getline(List[i].quantityOfSignatures, 10);
         cout << endl;
     }
-    fstream info;
-    info.open ("CandidatsList.txt", ios::out|ios::binary|ios::trunc);
-    info.write((char *)List ,quanOfCandidats*sizeof( CandidatsList)) << "\n";
-    info.close();
-
-}
-
-void addCandidat(struct CandidatsList *List, int quanOfAddedCandidats, const int quanOfCandidats, int where)
-{
-    cin.ignore(1,'\n');
-    for( int i = where; i < where+quanOfAddedCandidats; ++i)
-    {
-        cout << "Enter Surname Of Candidat: ";
-        cin.getline(List[where].surnameOfCandidat, 20);
-
-        cout << "Enter Number Of Electoral District: ";
-        cin.getline(List[where].numberOfElectoralDistrict, 10);
-
-        cout << "Enter Name Of Electoral District: ";
-        cin.getline(List[where].nameOfElectoralDistrict, 30);
-
-        cout << "Quantity Of Signatures: ";
-        cin.getline(List[where].quantityOfSignatures, 10);
-        cout<<endl;
-    }
-    fstream info;
-    info.open ("CandidatsList.txt", ios::out|ios::binary|ios::trunc);
-    info.write((char *)List, sizeof( CandidatsList)) << "\n";
-    info.close();
 }
 
 void showCandidatsList(struct CandidatsList *List, const int quanOfCandidats)
@@ -133,7 +123,7 @@ void Repair(struct CandidatsList *List, int i, const int quanOfCandidats, int (*
 {
     int n = quanOfCandidats;
 
-    CandidatsList *help;
+    CandidatsList help;
 
     int l = 2*i+1;
     int r = 2*i+2;
@@ -150,9 +140,9 @@ void Repair(struct CandidatsList *List, int i, const int quanOfCandidats, int (*
 
     if( larg != i)
     {
-        *help = List[larg];
+        help = List[larg];
         List[larg] = List[i];
-        List[i] = *help;
+        List[i] = help;
         Repair ( List, larg, quanOfCandidats, (*fptr));
     }
 }
@@ -195,6 +185,7 @@ void Sort(struct CandidatsList *List, const int quanOfCandidats, int (*fptr)( Ca
 
 void outFront( struct CandidatsList *List, const int quanOfCandidats)
 {
+    cin.ignore(1,'\n');
     for( int i = 0; i < quanOfCandidats; ++i)
     {
         cout << List[i].surnameOfCandidat << endl;
@@ -220,18 +211,17 @@ void outBack( struct CandidatsList *List, const int quanOfCandidats)
 
 void sortDataBase(struct CandidatsList *List, const int quanOfCandidats)
 {
-    CandidatsList *one = new CandidatsList [22];
+    CandidatsList *one = new CandidatsList [20];
     typedef int (*pointer)(CandidatsList, CandidatsList);
     pointer *point;
     point = new pointer[4];
-    point[0] = sortBySurnameOfCandidat;
-    point[1] = sortByNumberOfElectoralDistrict;
-    point[2] = sortByNameOfElectoralDistrict;
-    point[3] = sortByQuantityOfSignatures;
-
+    point[0] = compareBySurnameOfCandidat;
+    point[1] = compareByNumberOfElectoralDistrict;
+    point[2] = compareByNameOfElectoralDistrict;
+    point[3] = compareByQuantityOfSignatures;
 
     cout << "Welcome To Sorting Program For Existing DataBase!" << endl;
-    cout << "If You want to sort the DataBase ";
+    cout << "If You want to sort the DataBase " << endl;
 
     cout << "   From A till Z by surname of candidat, please, press <1>";
     cout << endl;
@@ -257,66 +247,82 @@ void sortDataBase(struct CandidatsList *List, const int quanOfCandidats)
 
     if( enterNumber == '1')
     {
+        system("cls");
         Sort ( one, quanOfCandidats, point[0]);
         outFront( one, quanOfCandidats);
+        system("pause");
 
     }
     if( enterNumber == '2')
     {
+        system("cls");
         Sort ( one, quanOfCandidats, point[0]);
         outBack( one, quanOfCandidats);
+        system("pause");
     }
     if( enterNumber == '3')
     {
+        system("cls");
         Sort ( one, quanOfCandidats, point[1]);
         outFront( one, quanOfCandidats);
+        system("pause");
     }
     if( enterNumber == '4')
     {
+        system("cls");
         Sort ( one, quanOfCandidats, point[1]);
         outBack( one, quanOfCandidats);
+        system("pause");
     }
     if( enterNumber == '5')
     {
+        system("cls");
         Sort ( one, quanOfCandidats, point[2]);
         outFront( one, quanOfCandidats);
+        system("pause");
     }
     if( enterNumber == '6')
     {
+        system("cls");
         Sort ( one, quanOfCandidats, point[2]);
         outBack( one, quanOfCandidats);
+        system("pause");
     }
     if( enterNumber == '7')
     {
+        system("cls");
         Sort ( one, quanOfCandidats, point[3]);
         outFront( one, quanOfCandidats);
+        system("pause");
     }
     if( enterNumber == '7')
     {
+        system("cls");
         Sort ( one, quanOfCandidats, point[3]);
         outBack( one, quanOfCandidats);
+        system("pause");
     }
     delete []point;
     delete []one;
     return;
 }
 
-int sortBySurnameOfCandidat(struct CandidatsList List1, struct CandidatsList List2)
+int compareBySurnameOfCandidat(struct CandidatsList List1, struct CandidatsList List2)
 {
     return strcmp(List1.surnameOfCandidat, List2.surnameOfCandidat);
 }
 
-int sortByNumberOfElectoralDistrict(struct CandidatsList List1, struct CandidatsList List2)
+int compareByNumberOfElectoralDistrict(struct CandidatsList List1, struct CandidatsList List2)
 {
     return strcmp(List1.numberOfElectoralDistrict, List2.numberOfElectoralDistrict);
 }
 
-int sortByNameOfElectoralDistrict(struct CandidatsList List1, struct CandidatsList List2)
+int compareByNameOfElectoralDistrict(struct CandidatsList List1, struct CandidatsList List2)
 {
     return strcmp(List1.nameOfElectoralDistrict, List2.nameOfElectoralDistrict);
 }
 
-int sortByQuantityOfSignatures(struct CandidatsList List1, struct CandidatsList List2)
+int compareByQuantityOfSignatures(struct CandidatsList List1, struct CandidatsList List2)
 {
     return strcmp(List1.quantityOfSignatures, List2.quantityOfSignatures);
 }
